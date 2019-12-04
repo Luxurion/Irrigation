@@ -1,0 +1,80 @@
+#define RS 2
+#define EN 3
+#define D4 4
+#define D5 12
+#define D6 9
+#define D7 11
+const float threshold = 30.2;
+const int valve = 8; 
+const int motor = 10;
+ //const int off = 13;
+#include <LiquidCrystal.h> //This librarey is insatlled by default along with IDE
+LiquidCrystal lcd(RS, EN, D4, D5, D6, D7); //Let the librarey know how we have connected the LCD
+void setup() {
+  lcd.begin(16, 2); //We are using a 16*2 LCD display
+  lcd.setCursor (0,0); //Place the cursor at 1st row 1st column
+  lcd.print("WELCOME"); //Display a intro message
+  lcd.setCursor(0, 1);   // set the cursor to 1st column 2nd row
+  lcd.print("INITIALIZING..."); //Display a intro message
+  //pinMode (off, OUTPUT);
+  pinMode(valve, OUTPUT);
+  pinMode(motor, OUTPUT);
+  delay(2000); //Wait for display to show info
+ lcd.clear(); //Then clean it
+}
+void loop() {
+  //turn on display
+  //digitalWrite(off, HIGH);
+  int val = analogRead(A7);
+  // read the ADC value from pin A7
+  //A = (ADC Value / ADC Resolution) * Reference A
+  //float A = (float(val)/1024) * 3.6; //formulae to convert the ADC value to A
+  float A = ( 100 - ( (val/1024.00) * 100 ) );
+  lcd.setCursor(0, 0);   // set the cursor to column 0, line 0
+  lcd.print("Moisture A:");
+  lcd.print(A); //Display A
+  lcd.print("%");
+  //delay (10);
+//      // read the ADC value from pin A7
+  int val2 = analogRead(A3);
+  float B = ( 100 - ( (val2/1024.00) * 100 ) );
+  lcd.setCursor(0, 1);   // set the cursor to column 0, line 1
+  lcd.print("Moisture B:");
+  lcd.print(B); //Display A
+  lcd.print("%");
+  delay(1000);
+if (A < threshold  ){//> threshold ){
+  //turn on valve
+  //turn on motor 
+  digitalWrite(valve, HIGH);
+  digitalWrite(motor, HIGH);
+}
+else if (B < threshold){//&& B < threshold){
+  //turn on motor
+  digitalWrite(valve, LOW);
+  digitalWrite(motor, HIGH);
+} 
+else if (A > threshold && B > threshold){
+//turun off motor
+  //turn off valve
+  digitalWrite(valve, LOW);
+  digitalWrite(motor, LOW);
+  lcd.clear();
+  lcd.setCursor(0, 0);   // set the cursor to column 0, line 0
+  lcd.print("Entering Standby");
+  lcd.setCursor(0, 1);   // set the cursor to column 0, line 0
+  lcd.print("Mode...");
+  delay (1000);
+  lcd.clear();
+  //turn lcd off here
+  //digitalWrite(off, LOW);
+  for (;;)
+  {
+    int val = analogRead(A7);
+    float A = ( 100 - ( (val/1024.00) * 100 ) );
+    int val2 = analogRead(A3);
+    float B = ( 100 - ( (val2/1024.00) * 100 ) );
+    if (A < threshold || B < threshold ){
+    break;
+    } }}}
+CODE FOR PROJECT
